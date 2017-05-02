@@ -52,7 +52,7 @@ git clone -b stable https://github.com/vatesfr/xo-server /opt/xo-server/
 git clone -b stable https://github.com/vatesfr/xo-web /opt/xo-web/
 
 ##apply config patch to sample config
-cd ./xo-server
+cd /opt/xo-server
 
 git apply /tmp/xo_server_mod-config.patch
 
