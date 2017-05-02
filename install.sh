@@ -18,7 +18,7 @@ echo "OS is compatible."
 echo "Proceeding with install ..."
 
 echo "Preparing files"
-cp xo_server_mod-config.patch /tmp/
+cp ./patches/xo_server_mod-config.patch /tmp/
 
 echo "Installing nodejs and npm"
 curl --progress-bar -o /usr/local/bin/n https://raw.githubusercontent.com/visionmedia/n/master/bin/n
