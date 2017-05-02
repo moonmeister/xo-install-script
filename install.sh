@@ -5,8 +5,13 @@
 #see the xo project at https://github.com/vatesfr/
 
 ##Main Script##
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
 os=$(uname -n)
-echo $os
 
 if [ $os != "ubuntu" ]
 	then
