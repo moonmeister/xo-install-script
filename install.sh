@@ -48,8 +48,8 @@ apt-get install -qq build-essential redis-server libpng-dev git python-minimal y
 ##clone xo repos
 echo "Cloning repositories"
 
-git clone -b stable https://github.com/vatesfr/xo-server /opt
-git clone -b stable https://github.com/vatesfr/xo-web /opt
+git clone -b stable https://github.com/vatesfr/xo-server /opt/xo-server/
+git clone -b stable https://github.com/vatesfr/xo-web /opt/xo-web/
 
 ##apply config patch to sample config
 cd ./xo-server
