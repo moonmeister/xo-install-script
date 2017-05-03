@@ -13,7 +13,7 @@ fi
 
 os=$(uname -n)
 
-if [ $os != "ubuntu" ]
+if [ $os != "ubuntu" -o "debian"]
 	then
 	 echo "Operating system $os is not compatible!"
 	 exit
