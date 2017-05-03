@@ -10,16 +10,26 @@ set -e
 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
-  exit
+  exit 1
 fi
 
 os=$(uname -n)
 
-if [ $os != "ubuntu" -o $os != "debian" ]
-	then
-	 echo "Operating system $os is not compatible!"
-	 exit
-fi
+##if [ $os != "ubuntu" -o $os != "debian" ]
+#	then
+#	 echo "Operating system $os is not compatible!"
+#	 exit 1
+#fi
+
+case "$os" in
+	"ubuntu" )
+	"debian" )
+		;;
+	* )
+		echo "Operating system $os is not compatible!"
+		exit 1
+		;;
+esac
 
 ##check for prerequisits
 command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
