@@ -40,12 +40,12 @@ git pull --ff-only
 ##rebuilding xo-server
 echo "re-building XO-Server"
 rm -rf ./node_modules
-yarn --non-interactive && yarn run build
+yarn --non-interactive
 
 echo "re-building XO-Web"
 cd ../xo-web
 rm -rf ./node_modules
-yarn --non-interactive && yarn run build
+yarn --non-interactive
 
 
 echo "Up to date"
