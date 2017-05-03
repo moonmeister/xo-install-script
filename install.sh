@@ -37,7 +37,7 @@ esac
 ##check for prerequisits
 command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
 
-dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { sudo apt-get install -qq apt-transport-https; }
+dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { sudo apt-get install -qq apt-transport-https >&2; }
 
 echo "OS is compatible."
 echo "Proceeding with install ..."
