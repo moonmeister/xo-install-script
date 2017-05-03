@@ -6,6 +6,8 @@
 
 set -e
 
+install_root="/opt/"
+
 ##Main Script##
 
 if [ "$EUID" -ne 0 ]
@@ -66,16 +68,28 @@ apt-get install -qq build-essential redis-server libpng-dev git python-minimal y
 ##clone xo repos
 echo "Cloning repositories"
 
-git clone -b stable https://github.com/vatesfr/xo-server /opt/xo-server/
-git clone -b stable https://github.com/vatesfr/xo-web /opt/xo-web/
+#check for existing repo and remove
+if [ -d "${install_root}xo-server/" ]; then 
+	rm -rf "${install_root}xo-server/"
+fi
+
+git clone -b stable https://github.com/vatesfr/xo-server ${install_root}xo-server/
+
+#check for existing repo and destory
+if [ -d "${install_root}xo-web/" ]; then
+	rm -rf "${install_root}xo-web/"
+fi
+git clone -b stable https://github.com/vatesfr/xo-web ${install_root}xo-web/
 
 ##apply config patch to sample config
-cd /opt/xo-server
+cd ${install_root}/xo-server
 
 git apply /tmp/xo_server_mod-config.patch
 
 ##copy config to etc directory
-mkdir /etc/xo-server/
+if [ ! -d "/etc/xo-server" ]; then
+	mkdir /etc/xo-server/
+fi
 
 cp ./sample.config.yaml /etc/xo-server/config.yaml
 
