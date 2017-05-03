@@ -23,6 +23,7 @@ os=$(uname -n)
 
 case "$os" in
 	"ubuntu" )
+		;;	
 	"debian" )
 		;;
 	* )
