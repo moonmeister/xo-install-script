@@ -96,13 +96,13 @@ cp ./sample.config.yaml /etc/xo-server/config.yaml
 ##building xo-server
 echo "Building XO-Server"
 
-yarn --non-interactive && yarn run build
+yarn --non-interactive 
 
 
 echo "Building XO-Web"
 
 cd ../xo-web
 
-yarn --non-interactive && yarn run build
+yarn --non-interactive
 
 echo "Yay. All installed"
