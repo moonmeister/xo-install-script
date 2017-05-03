@@ -4,6 +4,8 @@
 
 #see the xo project at https://github.com/vatesfr/
 
+set -e
+
 ##Main Script##
 
 if [ "$EUID" -ne 0 ]
@@ -13,11 +15,16 @@ fi
 
 os=$(uname -n)
 
-if [ $os != "ubuntu" -o "debian"]
+if [ $os != "ubuntu" -o "debian" ]
 	then
 	 echo "Operating system $os is not compatible!"
 	 exit
 fi
+
+##check for prerequisits
+command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
+
+dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || {sudo apt-get install -qq apt-transport-https; }
 
 echo "OS is compatible."
 echo "Proceeding with install ..."
