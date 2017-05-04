@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#This script will pull the latest code and proper dependancies for opensource xen-orchestra.
+#his script will pull the latest code and proper dependancies for opensource xen-orchestra.
 
 #    Copyright (C) 2017 AJ Moon 
 #
@@ -123,3 +123,22 @@ cd ../xo-web
 yarn --non-interactive
 
 echo "Yay. All installed"
+
+while true; do
+	service_config_default="Y"
+	read -p "Would you like to install xo-server as a service? [$service_config_default/n]: " service_config
+	service_config="${service_config:-$service_config_default}"
+	
+	case $service_config in
+        	[yY][eE][sS]|[yY] ) 
+			cd ../xo-server/
+			ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server
+			cp xo-server.service /etc/systemd/system/  
+			systemctl enable xo-server
+			systemctl start xo-server
+			break;;
+        	[nN][oO]|[nN] ) break;;
+        	* ) echo "Please answer (y)es or (n)o.";;
+	esac
+done
+
