@@ -34,12 +34,6 @@ fi
 
 os=$(uname -n)
 
-##if [ $os != "ubuntu" -o $os != "debian" ]
-#	then
-#	 echo "Operating system $os is not compatible!"
-#	 exit 1
-#fi
-
 case "$os" in
 	"ubuntu" )
 		;;	
