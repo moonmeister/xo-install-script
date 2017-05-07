@@ -1,11 +1,5 @@
-commit 0c6f41861406250690f6389ff259403789fdf7ed
-Author: AJ Moon <alex.jared.moon@gmail.com>
-Date:   Thu Apr 27 20:11:35 2017 -0700
-
-    creating a patch for sample.config.yaml
-
 diff --git a/sample.config.yaml b/sample.config.yaml
-index 7dba11f..eed426b 100644
+index 7dba11f..d755242 100644
 --- a/sample.config.yaml
 +++ b/sample.config.yaml
 @@ -108,7 +108,7 @@ http:
@@ -13,7 +7,7 @@ index 7dba11f..eed426b 100644
    # List of files/directories which will be served.
    mounts:
 -    #'/': '/path/to/xo-web/dist/'
-+    '/': '../xo-web/dist/'
++    '/': '/opt/xo-web/dist/'
  
    # List of proxied URLs (HTTP & WebSockets).
    proxies:
