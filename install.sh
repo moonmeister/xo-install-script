@@ -21,36 +21,20 @@
 
 #see the xo project at https://github.com/vatesfr/
 
-set -e
-
-install_root="/opt/"
+source resources/common.sh
 
 ##Main Script##
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit 1
-fi
+sudo_check #checks script is run as sudo/root
 
-os=$(uname -n)
+check_os $(get_os)
 
-case "$os" in
-	"ubuntu" )
-		;;	
-	"debian" )
-		;;
-	* )
-		echo "Operating system $os is not compatible!"
-		exit 1
-		;;
-esac
 
 ##check for prerequisits
 command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
 
 dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { sudo apt-get install -qq apt-transport-https >&2; }
 
-echo "OS is compatible."
 echo "Proceeding with install ..."
 
 echo "Preparing files"

@@ -20,27 +20,14 @@
 
 #see the xo project at https://github.com/vatesfr/
 
+source resources/common.sh
+
 ##Main Script##
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
-fi
+sudo_check #checks script is run as sudo/root
 
-os=$(uname -n)
+check_os $(get_os)
 
-case "$os" in
-	"ubuntu" )
-		;;	
-	"debian" )
-		;;
-	* )
-		echo "Operating system $os is not compatible!"
-		exit 1
-		;;
-esac
-
-echo "OS is compatible."
 echo "Proceeding with install ..."
 
 echo "Updating NodeJS"
