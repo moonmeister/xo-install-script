@@ -29,11 +29,16 @@ fi
 
 os=$(uname -n)
 
-if [ $os != "ubuntu" ]
-	then
-	 echo "Operating system $os is not compatible!"
-	 exit
-fi
+case "$os" in
+	"ubuntu" )
+		;;	
+	"debian" )
+		;;
+	* )
+		echo "Operating system $os is not compatible!"
+		exit 1
+		;;
+esac
 
 echo "OS is compatible."
 echo "Proceeding with install ..."
