@@ -39,7 +39,7 @@ curl -0 --progress-bar -L https://npmjs.com/install.sh | sudo sh
 
 ##clone xo repos
 echo "Updating repositories"
-cd /opt/xo-web
+cd ${install_root}xo-web
 git pull --ff-only
 
 cd ../xo-server
@@ -57,3 +57,5 @@ yarn --non-interactive
 
 
 echo "Up to date"
+echo "Restarting Server"
+systemctl restart xo-server
