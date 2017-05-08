@@ -6,7 +6,7 @@ If you're running large produciton environments or in need of support it's recom
 
 ## install.sh
 
-This script will install the latest stable version of XO along with it's prerequisits and dependancies. The XO source is placed in the `/opt/` directory. The primary `/opt/xo-server/bin/xo-server` executable is sym-linked to `/usr/local/bin/xo-server` and a service is optionally installed to run the server.
+This script will install the latest stable version of [xo-web](https://github.com/vatesfr/xo-web) and [xo-server](https://github.com/vatesfr/xo-server) along with their prerequisits and dependancies. The XO source is placed in the `/opt/` directory. The primary `/opt/xo-server/bin/xo-server` executable is sym-linked to `/usr/local/bin/xo-server` and a service is optionally installed to run the server.
 
 ### Other Installed Items
 1. Prerequisits
