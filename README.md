@@ -10,6 +10,9 @@ These scripts should run on most Debian based distro but have only been tested o
 * Ubuntu 16.04 LTS
 * Debian 8
 
+## Usage
+
+The scripts reference various files in this repository during the course of execution. To run these scripts the entire repo should be cloned or downloaded via compressed package and the `install.sh` and `update.sh` scripts run from there.
 
 ## install.sh
 
