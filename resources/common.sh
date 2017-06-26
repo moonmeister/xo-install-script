@@ -52,7 +52,7 @@ function check_os(){
 			compatible=$true
 	fi
 
-	if !compatible
+	if !$compatible
 		then
 			echo "Operating system $1 is not compatible!"
 			exit 1
