@@ -48,7 +48,7 @@ n lts
 
 echo "Installing npm"
 ##fixes bug with n instalation of node and updates npm"
-command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
+##command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
 curl -0 --progress-bar -L https://npmjs.com/install.sh | sudo sh
 
 echo "Adding Yarn Sources"
