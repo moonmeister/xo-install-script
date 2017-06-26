@@ -48,8 +48,8 @@ n lts
 
 echo "Installing npm"
 ##fixes bug with n instalation of node and updates npm"
-##command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
-curl -0 --progress-bar -L https://npmjs.com/install.sh | sudo sh
+command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
+npm -g install npm@latest
 
 echo "Adding Yarn Sources"
 curl -sS --progress-bar https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
