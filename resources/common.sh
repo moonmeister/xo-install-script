@@ -41,15 +41,15 @@ function get_os(){
 }
 
 function check_os(){
-	compatible = false
+	compatible=$false
 	if [[ $1 == *"Ubuntu"* ]]
 		then
-			compatible = true
+			compatible=$true
 	fi
 
 	if [[ $1 == *"Debian"* ]]
 		then
-			compatible = true
+			compatible=$true
 	fi
 
 	if !compatible
