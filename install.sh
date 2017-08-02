@@ -41,8 +41,7 @@ echo "Preparing files"
 cp ./patches/xo_server_mod-config.patch /tmp/
 
 echo "Installing nodejs"
-curl --progress-bar -o /usr/local/bin/n https://raw.githubusercontent.com/visionmedia/n/master/bin/n
-
+curl --progress-bar -o /usr/local/bin/n https://raw.githubusercontent.com/tj/n/master/bin/n
 chmod +x /usr/local/bin/n
 n lts
 
