@@ -2,7 +2,7 @@
 
 #this script contains common variables and functions for all xo install/updating related master scripts.
 
-#    Copyright (C) 2017 AJ Moon 
+#    Copyright (C) 2017 AJ Moon
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -36,22 +36,27 @@ function sudo_check(){
 
 
 function get_os(){
-	os=$(uname -n)
+	os=$(uname -v)
 	echo "${os}"
 }
 
 function check_os(){
-case "$1" in
-	"ubuntu" )
-		;;	
-	"debian" )
-		;;
-	* )
-		echo "Operating system $1 is not compatible!"
-		exit 1
-		;;
-esac
+	compatible=$false
+	if [[ $1 == *"Ubuntu"* ]]
+		then
+			compatible=$true
+	fi
+
+	if [[ $1 == *"Debian"* ]]
+		then
+			compatible=$true
+	fi
+
+	if [! $compatible]
+		then
+			echo "Operating system $1 is not compatible!"
+			exit 1
+		fi
 
 echo "Operating system is compatible"
-
 }

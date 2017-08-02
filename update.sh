@@ -2,7 +2,7 @@
 
 #This script will pull the latest code and proper dependancies for opensource xen-orchestra.
 
-#    Copyright (C) 2017 AJ Moon 
+#    Copyright (C) 2017 AJ Moon
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
 #see the xo project at https://github.com/vatesfr/
@@ -34,8 +34,8 @@ echo "Updating NodeJS"
 n lts
 
 echo "Installing npm"
-##fixes bug with n instalation of node and updates npm"
-curl -0 --progress-bar -L https://npmjs.com/install.sh | sudo sh
+command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
+npm -g install npm@latest
 
 ##clone xo repos
 echo "Updating repositories"

@@ -2,7 +2,7 @@
 
 #his script will pull the latest code and proper dependancies for opensource xen-orchestra.
 
-#    Copyright (C) 2017 AJ Moon 
+#    Copyright (C) 2017 AJ Moon
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ echo "Proceeding with install ..."
 echo "Preparing files"
 cp ./patches/xo_server_mod-config.patch /tmp/
 
-echo "Installing nodejs and npm"
+echo "Installing nodejs"
 curl --progress-bar -o /usr/local/bin/n https://raw.githubusercontent.com/tj/n/master/bin/n
 
 chmod +x /usr/local/bin/n
@@ -48,7 +48,8 @@ n lts
 
 echo "Installing npm"
 ##fixes bug with n instalation of node and updates npm"
-curl -0 --progress-bar -L https://npmjs.com/install.sh | sudo sh
+command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
+npm -g install npm@latest
 
 echo "Adding Yarn Sources"
 curl -sS --progress-bar https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -64,7 +65,7 @@ apt-get install -qq build-essential redis-server libpng-dev git python-minimal y
 echo "Cloning repositories"
 
 #check for existing repo and remove
-if [ -d "${install_root}xo-server/" ]; then 
+if [ -d "${install_root}xo-server/" ]; then
 	rm -rf "${install_root}xo-server/"
 fi
 
@@ -91,7 +92,7 @@ cp ./sample.config.yaml /etc/xo-server/config.yaml
 ##building xo-server
 echo "Building XO-Server"
 
-yarn --non-interactive 
+yarn --non-interactive
 
 
 echo "Building XO-Web"
@@ -106,12 +107,12 @@ while true; do
 	service_config_default="Y"
 	read -p "Would you like to install xo-server as a service? [$service_config_default/n]: " service_config
 	service_config="${service_config:-$service_config_default}"
-	
+
 	case $service_config in
-        	[yY][eE][sS]|[yY] ) 
+        	[yY][eE][sS]|[yY] )
 			cd ../xo-server/
 			ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server
-			cp xo-server.service /etc/systemd/system/  
+			cp xo-server.service /etc/systemd/system/
 			systemctl enable xo-server
 			systemctl start xo-server
 			break;;
@@ -119,4 +120,3 @@ while true; do
         	* ) echo "Please answer (y)es or (n)o.";;
 	esac
 done
-
