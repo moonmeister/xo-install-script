@@ -13,9 +13,9 @@ sudo_check #checks script is run as sudo/root
 check_os $(get_os)
 
 ##check for prerequisits
-command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
+command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
 
-dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { sudo apt-get install -qq apt-transport-https >&2; }
+dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { apt-get install -qq apt-transport-https >&2; }
 
 echo "Proceeding with install ..."
 

@@ -18,7 +18,7 @@ echo "Updating NodeJS"
 n lts
 
 echo "Installing npm"
-command -v npm >/dev/null 2 || { sudo apt-get install -qq npm >&2; }
+command -v npm >/dev/null 2 || { apt-get install -qq npm >&2; }
 npm -g install npm@latest
 
 ##clone xo repos
