@@ -12,7 +12,6 @@ sudo_check #checks script is run as sudo/root
 
 check_os $(get_os)
 
-
 ##check for prerequisits
 command -v curl >/dev/null 2 || { sudo apt-get install -qq curl >&2; }
 
