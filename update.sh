@@ -33,12 +33,13 @@ git pull --ff-only
 echo "re-building XO-Server"
 rm -rf ./node_modules
 yarn --non-interactive
+yarn build --non-interactive
 
 echo "re-building XO-Web"
 cd ../xo-web
 rm -rf ./node_modules
 yarn --non-interactive
-
+yarn build --non-interactive
 
 echo "Up to date"
 echo "Restarting Server"
