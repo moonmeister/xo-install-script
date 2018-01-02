@@ -75,6 +75,7 @@ cp ./sample.config.yaml /etc/xo-server/config.yaml
 echo "Building XO-Server"
 
 yarn --non-interactive
+yarn build --non-interactive
 
 
 echo "Building XO-Web"
@@ -82,6 +83,7 @@ echo "Building XO-Web"
 cd ../xo-web
 
 yarn --non-interactive
+yarn build --non-interactive
 
 echo "Yay. All installed"
 
