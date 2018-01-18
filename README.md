@@ -59,6 +59,21 @@ The `update` subcommand will update xo-web and xo-server to the current stable r
 
 The `status` subcommand will first check if xo is installed. If it's installed it'll report the currently installed version. Next, it'll check if the `xo-server` service is installed, if so it'll report the service status.
 
+## Testing
+
+If you want to test these scripts a [Vagrant](https://www.vagrantup.com/) file is included. Vagrant is a great way to easily setup, config, manage, etc... VMs from command line. Once you have installed Vagrant...  
+
+1. To create and config the VM run `vagrant up <distro>`
+
+**Current Distros:**
+* ubuntu
+* debian
+
+2. Once vagrant has created and configure your vm `vagrant ssh <distro>` will connect you to the terminal.
+
+3. When you're done with your VM you can stop it using `vagrant halt <distro>` and destroy it using `vagrant destroy <distro>`.
+
+
 ## Future Features
 
 - [x] Single script with flags and sub commands
