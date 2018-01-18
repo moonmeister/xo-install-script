@@ -4,15 +4,17 @@
 
 #see the XO project at https://github.com/vatesfr/
 
-SCRIPT_VERSION="v0.3.0"
+set -e
+
+SCRIPT_VERSION="v0.3.0-alpha"
 
 install_root="/opt/"
 
 ##functions##
 
 function sudo_check(){
-	if [ "$EUID" -ne 0 ]
-	  then echo "Please run as root"
+	if [ "$EUID" -ne 0 ]; then
+		echo "Please run as root"
 		exit 1
 	fi
 }
@@ -43,7 +45,7 @@ function check_os(){
 	echo "Operating system is compatible"
 }
 
-install() {
+function install() {
 	##check for prerequisits
 	command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
 
@@ -141,9 +143,10 @@ install() {
 
 
 
+	exit 0
 }
 
-update() {
+function update() {
 	echo "Proceeding with install ..."
 
 	echo "Updating NodeJS"
@@ -178,8 +181,9 @@ update() {
 	systemctl restart xo-server
 }
 
-status() {
-
+function status() {
+	echo "this is the status"
+	systemctl status xo-server
 }
 ##Main Script##
 
@@ -212,8 +216,8 @@ done
 
 shift $((OPTIND -1))
 
-sudo_check() #check for running as sudo
-check_os $(get_os) #checks os is compatible
+sudo_check #check for running as sudo
+#check_os $(get_os) #checks os is compatible
 
 #save subcommand
 subcommand=$1
@@ -221,15 +225,14 @@ shift
 
 case "$subcommand" in
   install)
-    echo "doing install"
-		install()
+    echo "Installing..."
+		install
     ;;
 	update)
-		echo "doing update"
-		update()
+		echo "Updating..."
+		update
 		;;
 	status)
-		status()
-		echo "Checking Status"
+		status
 		;;
 esac
