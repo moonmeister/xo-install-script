@@ -77,11 +77,14 @@ If you want to test these scripts a [Vagrant](https://www.vagrantup.com/) file i
 ## Future Features
 
 - [x] Single script with flags and sub commands
-- [ ] Build out `Status` subcommand
-- [ ] Include git patch in file to make XOCTL a single file.
-- [ ] Include more error checking logic to make more robust
+- [x] Build out `Status` subcommand.
 - [ ] Include subcommand specific flags for changing script behavior such as install location.
+- [ ] add functionality to manage service.
 - [ ] possibly set various script variables via global variables.
+- [ ] Include git patch in file to make XOCTL a single file.
+- [ ] Include more error checking logic to make more robust.
+- [ ] xo config database backup and restore.
+
 
 ## Bugs and feature requests
 
