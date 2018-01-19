@@ -14,6 +14,8 @@ Vagrant.configure("2") do |config|
       # Customize the amount of memory on the VM:
       vb.memory = "2048"
     end
+
+    ubuntu.vm.network "forwarded_port", guest: 80, host: 8080
   end
 
   config.vm.define "debian", autostart: false do |debian|
@@ -22,6 +24,8 @@ Vagrant.configure("2") do |config|
       # Customize the amount of memory on the VM:
       vb.memory = "2048"
     end
+
+    debian.vm.network "forwarded_port", guest: 80, host: 8080
   end
 
   # Disable automatic box update checking. If you disable this, then
