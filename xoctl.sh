@@ -12,19 +12,19 @@ install_root="/opt/"
 
 ##functions##
 
-function sudo_check(){
+function sudo_check (){
 	if [ "$EUID" -ne 0 ]; then
 		echo "Please run as root"
 		exit 1
 	fi
 }
 
-function get_os(){
+function get_os (){
 	os=$(uname -v)
 	echo "${os}"
 }
 
-function check_os(){
+function check_os (){
 	compatible=$false
 	if [[ $1 == *"Ubuntu"* ]]
 		then
@@ -45,7 +45,23 @@ function check_os(){
 	echo "Operating system is compatible"
 }
 
-function install() {
+function check_install_state () {
+	if [ -d "/etc/xo-server" ] && [ -d "${install_root}xo-web/" ] && [ -d "${install_root}xo-server/" ]; then
+		true
+	else
+		false
+	fi
+}
+
+function install_service {
+	cd "${install_root}xo-server/"
+	ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server &> /dev/null && echo "Creating symlink..."
+	cp xo-server.service /etc/systemd/system/ && echo "copying system service file..."
+	systemctl enable xo-server && echo "Enabling service at boot..."
+	systemctl start xo-server && echo "Starting xo-server...please prepare for departure. :)!"
+}
+
+function install () {
 	##check for prerequisits
 	command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
 
@@ -127,15 +143,13 @@ function install() {
 		service_config="${service_config:-$service_config_default}"
 
 		case $service_config in
-	        	[yY][eE][sS]|[yY] )
-				cd ../xo-server/
-				ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server
-				cp xo-server.service /etc/systemd/system/
-				systemctl enable xo-server
-				systemctl start xo-server
+    	[yY][eE][sS]|[yY] )
+				install_service
 				break;;
-	        	[nN][oO]|[nN] ) break;;
-	        	* ) echo "Please answer (y)es or (n)o.";;
+
+    	[nN][oO]|[nN] ) break;;
+
+    	* ) echo "Please answer (y)es or (n)o.";;
 		esac
 	done
 
@@ -146,7 +160,7 @@ function install() {
 	exit 0
 }
 
-function update() {
+function update () {
 	echo "Proceeding with install ..."
 
 	echo "Updating NodeJS"
@@ -181,13 +195,32 @@ function update() {
 	systemctl restart xo-server
 }
 
-function status() {
-	echo "this is the status"
-	systemctl status xo-server
+function status () {
+	if check_install_state; then
+		echo "Xen-Orchestra Installed"
+		echo
+		cd "${install_root}xo-web/"
+		echo -n "xo-web: "
+		git describe --tags
+		echo
+		cd "${install_root}xo-server/"
+		echo -n "xo-server: "
+		git describe --tags
+		echo
+	else
+		echo "Xen-Orchestra not Installed. Please run \`xoctl install\` to install Xen-Orchestra"
+		return 0
+	fi
+
+	if $(systemctl is-enabled xo-server.service &> /dev/null); then
+		systemctl status xo-server
+	else
+		echo "xo-server.service is not installed or is disabled(not set to run at boot)"
+	fi
 }
+
+
 ##Main Script##
-
-
 while getopts "vh" opt; do
 	case $opt in
 		h)
@@ -223,16 +256,19 @@ sudo_check #check for running as sudo
 subcommand=$1
 shift
 
-case "$subcommand" in
-  install)
-    echo "Installing..."
+case $subcommand in
+  "install")
+		echo "Installing..."
 		install
-    ;;
-	update)
+		exit 0
+		;;
+	"update")
 		echo "Updating..."
 		update
+		exit 0
 		;;
-	status)
+	"status")
 		status
+		exit 0
 		;;
 esac
