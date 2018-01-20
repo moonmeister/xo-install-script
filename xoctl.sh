@@ -1,16 +1,49 @@
 #!/bin/bash
 
-#This script helps manage an open source version of Xen-Orchestra xen-orchestra.
+# This script helps manage an open source version of Xen-Orchestra xen-orchestra.
 
-#see the XO project at https://github.com/vatesfr/
+# See the XO project at https://github.com/vatesfr/
 
-set -e
-
+# Script Version
 SCRIPT_VERSION="v0.3.0-alpha"
 
-install_root="/opt/"
+# Set script to exit if any subcommand returns non 0 (fails).
+set -eux
 
-##functions##
+## CONSTANTS ###
+
+# Set XO_ROOT from sys var and validate input, this is the path where XO is installed.
+if [[ -z "$XO_ROOT" ]]; then
+	# if XO_ROOT is not set then set default value.
+	XO_ROOT="/opt/"
+else
+	# check path ends in "/"
+	case "$XO_ROOT" in
+		*/)
+    	echo "has slash"
+    	;;
+		*)
+    	echo "doesn't have a slash"
+    	;;
+	esac
+
+	#confirm path exists
+	if [ -d "$XO_ROOT" ]; then
+		echo "Path set in env var XO_ROOT dos not exist: ${XO_ROOT}"
+    exit 1
+	else
+    true
+	fi
+fi
+
+readonly XO_ROOT
+
+## functions ##
+
+
+err() {
+  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
+}
 
 function sudo_check (){
 	if [ "$EUID" -ne 0 ]; then
@@ -19,34 +52,8 @@ function sudo_check (){
 	fi
 }
 
-function get_os (){
-	os=$(uname -v)
-	echo "${os}"
-}
-
-function check_os (){
-	compatible=$false
-	if [[ $1 == *"Ubuntu"* ]]
-		then
-			compatible=$true
-	fi
-
-	if [[ $1 == *"Debian"* ]]
-		then
-			compatible=$true
-	fi
-
-	if [! $compatible]
-		then
-			echo "Operating system $1 is not compatible!"
-			exit 1
-		fi
-
-	echo "Operating system is compatible"
-}
-
 function check_install_state () {
-	if [ -d "/etc/xo-server" ] && [ -d "${install_root}xo-web/" ] && [ -d "${install_root}xo-server/" ]; then
+	if [ -d "/etc/xo-server" ] && [ -d "${XO_ROOT}xo-web/" ] && [ -d "${XO_ROOT}xo-server/" ]; then
 		true
 	else
 		false
@@ -54,14 +61,14 @@ function check_install_state () {
 }
 
 function install_service {
-	cd "${install_root}xo-server/"
+	cd "${XO_ROOT}xo-server/"
 	ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server &> /dev/null && echo "Creating symlink..."
 	cp xo-server.service /etc/systemd/system/ && echo "copying system service file..."
 	systemctl enable xo-server && echo "Enabling service at boot..."
 	systemctl start xo-server && echo "Starting xo-server...please prepare for departure. :)!"
 }
 
-function install () {
+function install_xo () {
 	##check for prerequisits
 	command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
 
@@ -97,20 +104,20 @@ function install () {
 	echo "Cloning repositories"
 
 	#check for existing repo and remove
-	if [ -d "${install_root}xo-server/" ]; then
-		rm -rf "${install_root}xo-server/"
+	if [ -d "${XO_ROOT}xo-server/" ]; then
+		rm -rf "${XO_ROOT}xo-server/"
 	fi
 
-	git clone -b stable https://github.com/vatesfr/xo-server ${install_root}xo-server/
+	git clone -b stable https://github.com/vatesfr/xo-server ${XO_ROOT}xo-server/
 
 	#check for existing repo and destory
-	if [ -d "${install_root}xo-web/" ]; then
-		rm -rf "${install_root}xo-web/"
+	if [ -d "${XO_ROOT}xo-web/" ]; then
+		rm -rf "${XO_ROOT}xo-web/"
 	fi
-	git clone -b stable https://github.com/vatesfr/xo-web ${install_root}xo-web/
+	git clone -b stable https://github.com/vatesfr/xo-web ${XO_ROOT}xo-web/
 
 	##apply config patch to sample config
-	cd ${install_root}/xo-server
+	cd ${XO_ROOT}/xo-server
 
 	git apply /tmp/xo_server_mod-config.patch
 
@@ -147,7 +154,8 @@ function install () {
 				install_service
 				break;;
 
-    	[nN][oO]|[nN] ) break;;
+    	[nN][oO]|[nN] )
+				break;;
 
     	* ) echo "Please answer (y)es or (n)o.";;
 		esac
@@ -160,7 +168,7 @@ function install () {
 	exit 0
 }
 
-function update () {
+function update_xo () {
 	echo "Proceeding with install ..."
 
 	echo "Updating NodeJS"
@@ -172,7 +180,7 @@ function update () {
 
 	##clone xo repos
 	echo "Updating repositories"
-	cd ${install_root}xo-web
+	cd ${XO_ROOT}xo-web
 	git pull --ff-only
 
 	cd ../xo-server
@@ -195,15 +203,15 @@ function update () {
 	systemctl restart xo-server
 }
 
-function status () {
+function xo_status () {
 	if check_install_state; then
 		echo "Xen-Orchestra Installed"
 		echo
-		cd "${install_root}xo-web/"
+		cd "${XO_ROOT}xo-web/"
 		echo -n "xo-web: "
 		git describe --tags
 		echo
-		cd "${install_root}xo-server/"
+		cd "${XO_ROOT}xo-server/"
 		echo -n "xo-server: "
 		git describe --tags
 		echo
@@ -212,63 +220,67 @@ function status () {
 		return 0
 	fi
 
-	if $(systemctl is-enabled xo-server.service &> /dev/null); then
+	if systemctl is-enabled xo-server.service &> /dev/null; then
 		systemctl status xo-server
 	else
 		echo "xo-server.service is not installed or is disabled(not set to run at boot)"
 	fi
 }
 
+function main () {
+	while getopts "vh" opt; do
+		case $opt in
+			h)
+				printf "Usage:\n"
+				printf "\t-h \t\t Display this help message.\n"
+				printf "\t-v \t\t Display Script Version.\n"
+				printf "\tinstall \t Installs Xen-Orchestra.\n"
+				printf "\tupdate \t\t Updates an existing install of Xen-Orchestra.\n"
+				printf "\tstatus \t\t Gives a status of Xen-Orchestra: Install status, version installed, service instalation status, and service status."
+				exit 0
+				;;
+			v)
+				echo "xoctl verion: $SCRIPT_VERSION"
+				exit 0
+				;;
+			\?)
+				echo "Invalid option: -$OPTARG" >&2
+				exit 1
+				;;
+			:)
+				echo "Option -$OPTARG requires an argument." >&2
+				exit 1
+				;;
+		esac
+	done
 
-##Main Script##
-while getopts "vh" opt; do
-	case $opt in
-		h)
-			printf "Usage:\n"
-			printf "\t-h \t\t Display this help message.\n"
-			printf "\t-v \t\t Display Script Version.\n"
-			printf "\tinstall \t Installs Xen-Orchestra.\n"
-			printf "\tupdate \t\t Updates an existing install of Xen-Orchestra.\n"
-			printf "\tstatus \t\t Gives a status of Xen-Orchestra: Install status, version installed, service instalation status, and service status."
+	shift $((OPTIND -1))
+
+	sudo_check #check for running as sudo
+	#check_os $(get_os) #checks os is compatible
+
+	#save subcommand
+	subcommand=$1
+	shift
+
+	case $subcommand in
+	  "install")
+			echo "Installing..."
+			install_xo
 			exit 0
 			;;
-		v)
-			echo "xoctl verion: $SCRIPT_VERSION"
+		"update")
+			echo "Updating..."
+			update_xo
 			exit 0
 			;;
-		\?)
-			echo "Invalid option: -$OPTARG" >&2
-			exit 1
-			;;
-		:)
-			echo "Option -$OPTARG requires an argument." >&2
-			exit 1
+		"status")
+			xo_status
+			exit 0
 			;;
 	esac
-done
+}
 
-shift $((OPTIND -1))
+##Main Script##
 
-sudo_check #check for running as sudo
-#check_os $(get_os) #checks os is compatible
-
-#save subcommand
-subcommand=$1
-shift
-
-case $subcommand in
-  "install")
-		echo "Installing..."
-		install
-		exit 0
-		;;
-	"update")
-		echo "Updating..."
-		update
-		exit 0
-		;;
-	"status")
-		status
-		exit 0
-		;;
-esac
+main "$@"
