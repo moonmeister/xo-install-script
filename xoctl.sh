@@ -8,7 +8,7 @@
 SCRIPT_VERSION="v0.3.0-alpha"
 
 # Set script to exit if any subcommand returns non 0 (fails).
-set -eux
+set -e
 
 ## CONSTANTS ###
 
@@ -20,40 +20,38 @@ else
 	# check path ends in "/"
 	case "$XO_ROOT" in
 		*/)
-    	echo "has slash"
     	;;
 		*)
-    	echo "doesn't have a slash"
+    	XO_ROOT+="/"
     	;;
 	esac
 
 	#confirm path exists
-	if [ -d "$XO_ROOT" ]; then
-		echo "Path set in env var XO_ROOT dos not exist: ${XO_ROOT}"
+	if [[ -d "$XO_ROOT" ]]; then
+		echo "XO_ROOT path (${XO_ROOT}) does not exist"
     exit 1
-	else
-    true
 	fi
 fi
+
+echo $XO_ROOT
 
 readonly XO_ROOT
 
 ## functions ##
 
-
-err() {
-  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
+function get_xo_version () {
+	git describe --tags
 }
 
 function sudo_check (){
-	if [ "$EUID" -ne 0 ]; then
+	if [[ "$EUID" -ne 0 ]]; then
 		echo "Please run as root"
 		exit 1
 	fi
 }
 
 function check_install_state () {
-	if [ -d "/etc/xo-server" ] && [ -d "${XO_ROOT}xo-web/" ] && [ -d "${XO_ROOT}xo-server/" ]; then
+	if [[ -d "/etc/xo-server" ]] && [[ -d "${XO_ROOT}xo-web/" ]] && [[ -d "${XO_ROOT}xo-server/" ]]; then
 		true
 	else
 		false
@@ -69,6 +67,7 @@ function install_service {
 }
 
 function install_xo () {
+
 	##check for prerequisits
 	command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
 
@@ -104,14 +103,14 @@ function install_xo () {
 	echo "Cloning repositories"
 
 	#check for existing repo and remove
-	if [ -d "${XO_ROOT}xo-server/" ]; then
+	if [[ -d "${XO_ROOT}xo-server/" ]]; then
 		rm -rf "${XO_ROOT}xo-server/"
 	fi
 
 	git clone -b stable https://github.com/vatesfr/xo-server ${XO_ROOT}xo-server/
 
 	#check for existing repo and destory
-	if [ -d "${XO_ROOT}xo-web/" ]; then
+	if [[ -d "${XO_ROOT}xo-web/" ]]; then
 		rm -rf "${XO_ROOT}xo-web/"
 	fi
 	git clone -b stable https://github.com/vatesfr/xo-web ${XO_ROOT}xo-web/
@@ -122,7 +121,7 @@ function install_xo () {
 	git apply /tmp/xo_server_mod-config.patch
 
 	##copy config to etc directory
-	if [ ! -d "/etc/xo-server" ]; then
+	if [[ ! -d "/etc/xo-server" ]]; then
 		mkdir /etc/xo-server/
 	fi
 
@@ -160,16 +159,10 @@ function install_xo () {
     	* ) echo "Please answer (y)es or (n)o.";;
 		esac
 	done
-
-
-
-
-
-	exit 0
 }
 
 function update_xo () {
-	echo "Proceeding with install ..."
+	echo "Proceeding with update..."
 
 	echo "Updating NodeJS"
 	n lts
@@ -181,26 +174,43 @@ function update_xo () {
 	##clone xo repos
 	echo "Updating repositories"
 	cd ${XO_ROOT}xo-web
+	printf "xo-web current version: "
+	get_xo_version
 	git pull --ff-only
+
+	printf "xo-web new version: "
+	get_xo_version
 
 	cd ../xo-server
+	printf "xo-server current version: "
+	get_xo_version
 	git pull --ff-only
+	printf "xo-server new version: "
+	get_xo_version
 
 	##rebuilding xo-server
-	echo "re-building XO-Server"
+	echo "re-building xo-server"
 	rm -rf ./node_modules
 	yarn --non-interactive
 	yarn build --non-interactive
 
-	echo "re-building XO-Web"
+	echo "re-building xo-web"
 	cd ../xo-web
 	rm -rf ./node_modules
 	yarn --non-interactive
 	yarn build --non-interactive
 
-	echo "Up to date!"
-	echo "Restarting Server"
-	systemctl restart xo-server
+	echo "Everything has updated succesfully!"
+	if [[ -f "/etc/systemd/system/xo-server.service" ]]; then
+		if systemctl is-active xo-server.service; then
+			echo "Restarting xo-server service"
+			systemctl restart xo-server
+		else
+			echo "xo-server service is not running and this script didn't stop it. Restart manually if desired using 'sudo systemctl start xo-server'."
+		fi
+	else
+		echo "xo-server service not installed. Start/Restart manually to run the updated code."
+	fi
 }
 
 function xo_status () {
@@ -209,21 +219,21 @@ function xo_status () {
 		echo
 		cd "${XO_ROOT}xo-web/"
 		echo -n "xo-web: "
-		git describe --tags
+		get_xo_version
 		echo
 		cd "${XO_ROOT}xo-server/"
 		echo -n "xo-server: "
-		git describe --tags
+		get_xo_version
 		echo
 	else
-		echo "Xen-Orchestra not Installed. Please run \`xoctl install\` to install Xen-Orchestra"
+		echo "Xen-Orchestra not installed. Please run \`xoctl install\` to install Xen-Orchestra"
 		return 0
 	fi
 
-	if systemctl is-enabled xo-server.service &> /dev/null; then
+	if [[ -f "/etc/systemd/system/xo-server.service" ]]; then
 		systemctl status xo-server
 	else
-		echo "xo-server.service is not installed or is disabled(not set to run at boot)"
+		echo "xo-server service is not installed."
 	fi
 }
 
@@ -231,7 +241,7 @@ function main () {
 	while getopts "vh" opt; do
 		case $opt in
 			h)
-				printf "Usage:\n"
+				printf "XOCTL Usage:\n"
 				printf "\t-h \t\t Display this help message.\n"
 				printf "\t-v \t\t Display Script Version.\n"
 				printf "\tinstall \t Installs Xen-Orchestra.\n"
@@ -265,22 +275,21 @@ function main () {
 
 	case $subcommand in
 	  "install")
-			echo "Installing..."
+			echo "Attempting to install XO at ${XO_ROOT}"
 			install_xo
-			exit 0
 			;;
 		"update")
-			echo "Updating..."
+			echo "Attempting to update XO at ${XO_ROOT}"
 			update_xo
-			exit 0
 			;;
 		"status")
 			xo_status
-			exit 0
 			;;
 	esac
 }
 
-##Main Script##
+## Main Script ##
 
 main "$@"
+
+exit 0
