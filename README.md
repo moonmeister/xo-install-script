@@ -39,7 +39,7 @@ To run the script you can execute it directly e.g. `sudo ./xoctl.sh` or you may 
 
 ### Install
 
-`sudo xoctl install`
+`sudo ./xoctl.sh install`
 
 The `install` subcommand will install the latest stable version of [xo-web](https://github.com/vatesfr/xo-web) and [xo-server](https://github.com/vatesfr/xo-server) along with their dependencies. The XO source is placed in the `/opt/` directory by default. The primary `/opt/xo-server/bin/xo-server` executable is symlinked to `/usr/local/bin/xo-server` and a service is optionally installed to run the server.
 
@@ -49,13 +49,13 @@ The default XO config is used with the exception that a line is added to point t
 
 ### Update
 
-`sudo xoctl update`
+`sudo ./xoctl.sh update`
 
 The `update` subcommand will update xo-web and xo-server to the current stable release. It will also update node.js to the current LTS along with npm to the latest stable release. It will automatically restart the `xo-server` service before finishing.
 
 ### Status
 
-`sudo xoctl status`
+`sudo ./xoctl.sh status`
 
 The `status` subcommand will first check if xo is installed. If it's installed it'll report the currently installed version. Next, it'll check if the `xo-server` service is installed, if so it'll report the service status.
 
@@ -78,9 +78,9 @@ If you want to test these scripts a [Vagrant](https://www.vagrantup.com/) file i
 
 - [x] Single script with flags and sub commands
 - [x] Build out `Status` subcommand.
+- [x] set XO_ROOT (Install location) script variable via global variables.
 - [ ] Include subcommand specific flags for changing script behavior such as install location.
 - [ ] add functionality to manage service.
-- [ ] possibly set various script variables via global variables.
 - [ ] Include git patch in file to make XOCTL a single file.
 - [ ] Include more error checking logic to make more robust.
 - [ ] xo config database backup and restore.
