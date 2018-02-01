@@ -12,6 +12,8 @@ set -e
 
 ## CONSTANTS ###
 
+
+
 # Set XO_ROOT from sys var and validate input, this is the path where XO is installed.
 if [[ -z "$XO_ROOT" ]]; then
 	# if XO_ROOT is not set then set default value.
@@ -59,8 +61,8 @@ function check_install_state () {
 }
 
 function install_service {
-	cd "${XO_ROOT}xo-server/"
-	ln -s /opt/xo-server/bin/xo-server /usr/local/bin/xo-server &> /dev/null && echo "Creating symlink..."
+	cd "${XO_ROOT}xen-orchestra/packages/xo-server/"
+	ln -s /opt/xen-orchestra/packages/xo-server/bin/xo-server /usr/local/bin/xo-server &> /dev/null && echo "Creating symlink..."
 	cp xo-server.service /etc/systemd/system/ && echo "copying system service file..."
 	systemctl enable xo-server && echo "Enabling service at boot..."
 	systemctl start xo-server && echo "Starting xo-server...please prepare for departure. :)!"
@@ -103,11 +105,11 @@ function install_xo () {
 	echo "Cloning repositories"
 
 	#check for existing repo and remove
-	if [[ -d "${XO_ROOT}xo-server/" ]]; then
-		rm -rf "${XO_ROOT}xo-server/"
+	if [[ -d "${XO_ROOT}xen-orchestra/" ]]; then
+		rm -rf "${XO_ROOT}xen-orchestra/"
 	fi
 
-	git clone -b stable https://github.com/vatesfr/xo-server ${XO_ROOT}xo-server/
+	git clone -b master https://github.com/vatesfr/xen-orchestra ${XO_ROOT}xen-orchestra/
 
 	#check for existing repo and destory
 	if [[ -d "${XO_ROOT}xo-web/" ]]; then
@@ -116,7 +118,7 @@ function install_xo () {
 	git clone -b stable https://github.com/vatesfr/xo-web ${XO_ROOT}xo-web/
 
 	##apply config patch to sample config
-	cd ${XO_ROOT}/xo-server
+	cd ${XO_ROOT}xen-orchestra/packages/xo-server
 
 	git apply /tmp/xo_server_mod-config.patch
 
@@ -125,7 +127,7 @@ function install_xo () {
 		mkdir /etc/xo-server/
 	fi
 
-	cp ./sample.config.yaml /etc/xo-server/config.yaml
+	cp ./sample.config.yaml /etc/xo-server/xo-server.yaml
 
 	##building xo-server
 	echo "Building XO-Server"
@@ -136,7 +138,7 @@ function install_xo () {
 
 	echo "Building XO-Web"
 
-	cd ../xo-web
+	cd ${XO_ROOT}xo-web
 
 	yarn --non-interactive
 	yarn build --non-interactive
@@ -181,7 +183,7 @@ function update_xo () {
 	printf "xo-web new version: "
 	get_xo_version
 
-	cd ../xo-server
+	cd ${XO_ROOT}xen-orchestra/packages/xo-server
 	printf "xo-server current version: "
 	get_xo_version
 	git pull --ff-only
@@ -195,7 +197,7 @@ function update_xo () {
 	yarn build --non-interactive
 
 	echo "re-building xo-web"
-	cd ../xo-web
+	cd ${XO_ROOT}xo-web
 	rm -rf ./node_modules
 	yarn --non-interactive
 	yarn build --non-interactive
@@ -221,7 +223,7 @@ function xo_status () {
 		echo -n "xo-web: "
 		get_xo_version
 		echo
-		cd "${XO_ROOT}xo-server/"
+		cd "${XO_ROOT}xen-orchestra/packages/xo-server"
 		echo -n "xo-server: "
 		get_xo_version
 		echo
