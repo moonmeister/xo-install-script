@@ -82,7 +82,7 @@ If you want to test these scripts a [Vagrant](https://www.vagrantup.com/) file i
 - [ ] Include subcommand specific flags for changing script behavior such as install location.
 - [ ] Subcommand for plugin management.
 - [ ] add functionality to manage service.
-- [ ] Include git patch in file to make XOCTL a single file.
+- [x] Include git patch in file to make XOCTL a single file.
 - [ ] Include more error checking logic to make more robust.
 - [ ] xo config database backup and restore.
 
