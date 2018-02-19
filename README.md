@@ -71,6 +71,8 @@ If you want to test these scripts a [Vagrant](https://www.vagrantup.com/) file i
 
 2. Once vagrant has created and configure your vm `vagrant ssh <distro>` will connect you to the terminal.
 
+2. Once connected you can access the repo at `cd /xoctl/` This folder is connected to your host so any changes you make it the repo from your host will be reflected in this directory.
+
 3. When you're done with your VM you can stop it using `vagrant halt <distro>` and destroy it using `vagrant destroy <distro>`.
 
 
