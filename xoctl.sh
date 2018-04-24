@@ -66,6 +66,8 @@ function install_xo () {
     ##check for prerequisits
     command -v curl >/dev/null 2 || { apt-get install -qq curl >&2; }
     
+    
+    # shellcheck disable=SC2016    
     dpkg-query -W -f='${Status}' apt-transpot-https 2>/dev/null | grep -c "ok installed" || { apt-get install -qq apt-transport-https >&2; }
     
     echo "Proceeding with install ..."
@@ -77,6 +79,7 @@ function install_xo () {
     n lts
     
     echo "Installing npm"
+    
     ##fixes bug with n instalation of node and updates npm"
     command -v npm >/dev/null 2 || { apt-get install -qq npm >&2; }
     npm -g install npm@latest
@@ -96,7 +99,7 @@ function install_xo () {
     
     #check for existing repo and remove
     if [[ -d "${XO_ROOT}/$XO_FOLDER/" ]]; then
-        rm -rf "${XO_ROOT}/$XO_FOLDER/"
+        rm -rf "${XO_ROOT:?}/$XO_FOLDER/"
     fi
     
     git clone -b master $XO_SOURCE ${XO_ROOT}/$XO_FOLDER/
@@ -119,8 +122,7 @@ function install_xo () {
 
 	sed -i -e "s|$commented|$uncommented|" $CONFIG_FILE
  	sed -i -e "s|$old_path|$new_path|" $CONFIG_FILE
-
-    
+     
     echo "Building Xen-Orchestra"
     
     cd $XO_ROOT/$XO_FOLDER
