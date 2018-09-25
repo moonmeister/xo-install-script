@@ -26,6 +26,7 @@ Both **prerequisites** and **dependencies** are installed by the script itself.
    * build-essential
    * redis-server
    * libpng-dev
+   * nfs-common
 
 ## Usage
 
