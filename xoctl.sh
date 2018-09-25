@@ -92,7 +92,7 @@ function install_xo () {
     apt-get update -qq
     
     echo "Installing dependancies from apt"
-    apt-get install -qq build-essential redis-server libpng-dev git python-minimal yarn
+    apt-get install -qq build-essential redis-server libpng-dev git python-minimal yarn nfs-common
     
     ##clone xo repos
     echo "Cloning repositories"
