@@ -1,6 +1,8 @@
 # XOCTL
 #### Xen-Orchestra Control
 
+**⚠️WARNING⚠️:** I no longer maintain any Xen-Servers and thus no longer maintain any Xen-Orchastra instances. This means I'm not actively using, maintaining, or adding features to these scripts. I'm happy to accept PRs and even work on bugs reported in issues, but I have no normal context under which I'd notice issues myself. Thanks for being understanding.
+
 ## Getting Started
 
 A library of scripts for installing, updating, and managing [Xen-Orchestra](https://github.com/vatesfr/xo/)(XO). This script, its process, and the required packages are mostly based on the documentation found [here](https://github.com/vatesfr/xo/blob/master/docs/from_the_sources.md).
